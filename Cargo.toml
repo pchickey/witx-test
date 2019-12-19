@@ -4,6 +4,10 @@ version = "0.1.0"
 authors = ["Pat Hickey <phickey@fastly.com>"]
 edition = "2018"
 
+[[bin]]
+name = "witx-test"
+path = "src/main.rs"
+
 [dependencies]
 witx = { path = "WASI/tools/witx" }
 proptest = "0.9.4"

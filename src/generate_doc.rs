@@ -86,8 +86,8 @@ impl Norm {
 /// Generated specification document
 #[derive(Debug, Clone)]
 pub struct GenDoc {
-    typenames: Vec<GenType>,
-    modules: Vec<GenModule>,
+    pub typenames: Vec<GenType>,
+    pub modules: Vec<GenModule>,
 }
 
 impl GenDoc {
@@ -170,7 +170,7 @@ impl GenType {
 
 #[derive(Debug, Clone)]
 pub struct GenTypeRef {
-    idx: usize,
+    pub idx: usize,
 }
 
 impl GenTypeRef {
@@ -226,24 +226,21 @@ impl NoParamGen for IntRepr {
 
 #[derive(Debug, Clone)]
 pub struct GenEnum {
-    repr: IntRepr,
-    members: usize,
+    pub repr: IntRepr,
+    pub members: usize,
 }
 
 impl GenEnum {
     pub fn strat(limits: &Limits) -> BoxedStrategy<Self> {
         let limits = limits.clone();
-        (IntRepr::strat(), prop::num::usize::ANY)
-            .prop_map(move |(repr, members)| {
-                let max_members = std::cmp::min(
-                    limits.enum_variants,
-                    match repr {
-                        IntRepr::U8 => std::u8::MAX as usize,
-                        IntRepr::U16 => std::u16::MAX as usize,
-                        IntRepr::U32 => std::u32::MAX as usize,
-                        IntRepr::U64 => std::u64::MAX as usize,
-                    },
-                );
+        (IntRepr::strat(), (1..limits.enum_variants))
+            .prop_map(|(repr, members)| {
+                let max_members = match repr {
+                    IntRepr::U8 => std::u8::MAX as usize,
+                    IntRepr::U16 => std::u16::MAX as usize,
+                    IntRepr::U32 => std::u32::MAX as usize,
+                    IntRepr::U64 => std::u64::MAX as usize,
+                };
                 GenEnum {
                     repr,
                     members: members % max_members,
@@ -255,24 +252,21 @@ impl GenEnum {
 
 #[derive(Debug, Clone)]
 pub struct GenFlags {
-    repr: IntRepr,
-    members: usize,
+    pub repr: IntRepr,
+    pub members: usize,
 }
 
 impl GenFlags {
     pub fn strat(limits: &Limits) -> BoxedStrategy<Self> {
         let limits = limits.clone();
-        (IntRepr::strat(), prop::num::usize::ANY)
-            .prop_map(move |(repr, members)| {
-                let max_flags = std::cmp::min(
-                    limits.flag_members,
-                    match repr {
-                        IntRepr::U8 => 8,
-                        IntRepr::U16 => 16,
-                        IntRepr::U32 => 32,
-                        IntRepr::U64 => 64,
-                    },
-                );
+        (IntRepr::strat(), 1..limits.flag_members)
+            .prop_map(|(repr, members)| {
+                let max_flags = match repr {
+                    IntRepr::U8 => 8,
+                    IntRepr::U16 => 16,
+                    IntRepr::U32 => 32,
+                    IntRepr::U64 => 64,
+                };
                 GenFlags {
                     repr,
                     members: members % max_flags,
@@ -284,7 +278,7 @@ impl GenFlags {
 
 #[derive(Debug, Clone)]
 pub struct GenStruct {
-    members: Vec<GenTypeRef>,
+    pub members: Vec<GenTypeRef>,
 }
 
 impl GenStruct {
@@ -302,7 +296,7 @@ impl GenStruct {
 
 #[derive(Debug, Clone)]
 pub struct GenUnion {
-    variants: Vec<GenTypeRef>,
+    pub variants: Vec<GenTypeRef>,
 }
 
 impl GenUnion {
@@ -320,7 +314,7 @@ impl GenUnion {
 
 #[derive(Debug, Clone)]
 pub struct GenHandle {
-    supertypes: Vec<GenTypeRef>,
+    pub supertypes: Vec<GenTypeRef>,
 }
 
 impl GenHandle {
@@ -333,7 +327,7 @@ impl GenHandle {
 
 #[derive(Debug, Clone)]
 pub struct GenModule {
-    funcs: Vec<GenFunc>,
+    pub funcs: Vec<GenFunc>,
 }
 
 impl GenModule {
@@ -351,8 +345,8 @@ impl GenModule {
 
 #[derive(Debug, Clone)]
 pub struct GenFunc {
-    params: Vec<GenTypeRef>,
-    results: Vec<GenTypeRef>,
+    pub params: Vec<GenTypeRef>,
+    pub results: Vec<GenTypeRef>,
 }
 
 impl GenFunc {
