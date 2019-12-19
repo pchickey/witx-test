@@ -1,3 +1,6 @@
 [submodule "WASI"]
 	path = WASI
 	url = https://github.com/WebAssembly/WASI
+[submodule "wasi-libc"]
+	path = wasi-libc
+	url = https://github.com/cranestation/wasi-libc

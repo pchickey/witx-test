@@ -1,6 +1,6 @@
 use proptest::prelude::*;
-use witx_test::generate_doc::*;
 use witx;
+use witx_test::*;
 
 fn main() {
     let mut runner = prop::test_runner::TestRunner::default();
@@ -14,5 +14,4 @@ fn main() {
     println!("{}", gen_syntax);
 
     witx::parse(&gen_syntax).unwrap();
-    println!("valid!");
 }
