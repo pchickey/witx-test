@@ -1,0 +1,9 @@
+[package]
+name = "witx-test"
+version = "0.1.0"
+authors = ["Pat Hickey <phickey@fastly.com>"]
+edition = "2018"
+
+[dependencies]
+witx = { path = "WASI/tools/witx" }
+proptest = "0.9.4"
