@@ -9,5 +9,7 @@ name = "witx-test"
 path = "src/main.rs"
 
 [dependencies]
-witx = { path = "WASI/tools/witx" }
+witx = { path = "wasi-libc/tools/wasi-headers/WASI/tools/witx" }
 proptest = "0.9.4"
+wasi-headers = { path = "wasi-libc/tools/wasi-headers" }
+tempfile = "3.0"
