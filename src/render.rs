@@ -134,20 +134,26 @@ impl GenHandle {
 
 impl GenModule {
     pub fn to_sexpr(&self, ix: usize) -> SExpr {
-        let mut m = vec![SExpr::word("module"), SExpr::Ident(format!("m_{}", ix))];
-        m.extend(self.funcs.iter().enumerate().map(|(ix, f)| f.to_sexpr(ix)));
+        let module_name = format!("m_{}", ix);
+        let mut m = vec![SExpr::word("module"), SExpr::ident(&module_name)];
+        m.extend(
+            self.funcs
+                .iter()
+                .enumerate()
+                .map(|(ix, f)| f.to_sexpr(&module_name, ix)),
+        );
         SExpr::Vec(m)
     }
 }
 
 impl GenFunc {
-    pub fn to_sexpr(&self, ix: usize) -> SExpr {
+    pub fn to_sexpr(&self, module: &str, ix: usize) -> SExpr {
         let mut f = vec![
             SExpr::annot("interface"),
             SExpr::word("func"),
             SExpr::Vec(vec![
                 SExpr::word("export"),
-                SExpr::Quote(format!("f_{}", ix)),
+                SExpr::Quote(format!("{}_f_{}", module, ix)),
             ]),
         ];
         f.extend(

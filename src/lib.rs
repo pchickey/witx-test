@@ -42,7 +42,8 @@ pub fn check_header(header: &str) {
 #[cfg(test)]
 mod tests {
     use super::{check_header, GenDoc, Limits};
-    use proptest::proptest;
+    use proptest::{prop_assume, proptest};
+    use witx::Type;
     proptest! {
         #[test]
         fn generate_witx_spec(gen_doc in GenDoc::strat(&Limits::default())) {
@@ -57,6 +58,29 @@ mod tests {
             let gen_syntax = format!("{}", gen_doc);
             println!("{}", gen_syntax);
             let doc = witx::parse(&gen_syntax).unwrap();
+
+            // wasi_headers doesnt like return types that are pointers.
+            prop_assume!(
+                doc.modules().all(|m|
+                    m.funcs().all(|f|
+                        f.results.iter().all(|res|
+                            match *res.tref.type_() {
+                                Type::Array{..} |
+                                Type::Pointer{..} |
+                                Type::ConstPointer{..} => false,
+                                _ => true,
+                            }))));
+
+            // wasi_headers doesnt like type aliases to pointers, either!
+            prop_assume!(
+                doc.typenames().all(|nt|
+                    match *nt.tref.type_() {
+                        Type::Array{..} |
+                        Type::Pointer{..} |
+                        Type::ConstPointer{..} => false,
+                        _ => true
+                    }));
+
             let header = wasi_headers::to_c_header(&doc, "wasi-test generated");
             check_header(&header);
 
